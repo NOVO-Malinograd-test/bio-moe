@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>chilovek_na_lade | ELITE RP</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #5865F2;
+    --primary-dark: #4752c4;
+    --accent: #00d4ff;
+    --accent2: #ff00ea;
+    --green: #3ba55d;
+    --yellow: #faa61a;
+    --red: #ed4245;
+    --gray: #747f8d;
+    --bg: #050508;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: #fff;
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor {
+    position: fixed;
+    width: 14px; height: 14px;
+    background: var(--primary);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transition: width 0.15s, height 0.15s;
+    transform: translate(-50%, -50%);
+  }
+
+  .cursor.hover { width: 40px; height: 40px; background: var(--accent); }
+
+  .cursor-trail {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.5;
+    transform: translate(-50%, -50%);
+  }
+
+  #particles {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -3;
+  }
+
+  .bg-gradient {
+    position: fixed; inset: 0; z-index: -2;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(88, 101, 242, 0.25) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(255, 0, 234, 0.15) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 60%);
+    animation: bgPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes bgPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+  }
+
+  .bg-grid {
+    position: fixed; inset: 0; z-index: -1;
+    background-image: 
+      linear-gradient(rgba(88, 101, 242, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88, 101, 242, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    perspective: 500px;
+    transform: rotateX(60deg) translateY(-100px);
+    animation: gridMove 20s linear infinite;
+  }
+
+  @keyframes gridMove {
+    from { background-position: 0 0; }
+    to { background-position: 0 50px; }
+  }
+
+  .card-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .card {
+    max-width: 460px; width: 100%;
+    padding: 35px 28px;
+    background: rgba(10, 10, 15, 0.75);
+    border: 1px solid rgba(88, 101, 242, 0.3);
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+      0 0 60px rgba(88, 101, 242, 0.3),
+      0 0 120px rgba(88, 101, 242, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: cardIn 1s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(50px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .card::before {
+    content: '';
+    position: absolute; top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(88, 101, 242, 0.1) 50%, transparent 70%);
+    animation: shine 6s infinite;
+    pointer-events: none;
+  }
+
+  @keyframes shine {
+    from { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    to { transform: translateX(100%) translateY(100%) rotate(45deg); }
+  }
+
+  .corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    border: 2px solid var(--primary);
+    pointer-events: none;
+  }
+
+  .corner-tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+  .corner-tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+  .corner-bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+  .corner-br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+  /* АВАТАРКА */
+  .avatar-container {
+    position: relative;
+    width: 130px; height: 130px;
+    margin: 0 auto 25px;
+  }
+
+  .avatar-ring {
+    position: absolute; inset: -8px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--accent2), var(--primary));
+    animation: spin 4s linear infinite;
+    filter: blur(3px);
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .avatar-ring-inner {
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    background: #050508;
+    z-index: 0;
+  }
+
+  .avatar {
+    position: relative;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 55px;
+    overflow: hidden;
+    z-index: 1;
+    border: 3px solid #050508;
+  }
+
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .online-badge {
+    position: absolute;
+    bottom: 8px; right: 8px;
+    width: 26px; height: 26px;
+    background: var(--green);
+    border: 3px solid #050508;
+    border-radius: 50%;
+    z-index: 2;
+    box-shadow: 0 0 15px var(--green);
+    animation: onlinePulse 2s infinite;
+    transition: background 0.3s;
+  }
+
+  .online-badge.idle { background: var(--yellow); box-shadow: 0 0 15px var(--yellow); }
+  .online-badge.dnd { background: var(--red); box-shadow: 0 0 15px var(--red); }
+  .online-badge.offline { background: var(--gray); box-shadow: none; animation: none; }
+
+  @keyframes onlinePulse {
+    0%, 100% { box-shadow: 0 0 15px var(--green); }
+    50% { box-shadow: 0 0 25px var(--green), 0 0 40px var(--green); }
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 26px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #fff, var(--primary), #fff);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: textShine 3s linear infinite;
+    font-weight: 900;
+    word-break: break-word;
+  }
+
+  @keyframes textShine {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+
+  .username {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+  }
+
+  .badges {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    padding: 5px 14px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 0.3s;
+  }
+
+  .badge:hover { transform: scale(1.1) rotate(-3deg); }
+
+  .badge.premium {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  }
+
+  .badge.dev {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    box-shadow: 0 0 15px rgba(88, 101, 242, 0.5);
+  }
+
+  .badge.elite {
+    background: linear-gradient(135deg, var(--accent2), var(--primary));
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 0, 234, 0.5);
+  }
+
+  .bio {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    line-height: 1.8;
+    margin-bottom: 25px;
+    padding: 0 10px;
+    font-family: 'Courier New', monospace;
+    min-height: 22px;
+  }
+
+  .bio .type {
+    border-right: 2px solid var(--primary);
+    padding-right: 4px;
+    animation: blink 0.7s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50% { border-color: var(--primary); }
+    51%, 100% { border-color: transparent; }
+  }
+
+  /* LANYARD */
+  .lanyard-presence {
+    background: rgba(30, 30, 40, 0.6);
+    border: 1px solid rgba(88, 101, 242, 0.4);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lanyard-presence::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(88, 101, 242, 0.3), transparent);
+    animation: scan 3s infinite;
+  }
+
+  @keyframes scan { to { left: 100%; } }
+
+  .lanyard-presence .icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #5865F2, #4752c4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.5);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .lanyard-presence .icon img { width: 100%; height: 100%; object-fit: cover; }
+
+  .lanyard-presence .info { flex: 1; min-width: 0; z-index: 1; }
+
+  .lanyard-presence .status {
+    font-size: 14px;
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .lanyard-presence .status .dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: onlinePulse 2s infinite;
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+
+  .lanyard-presence .status .dot.idle { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+  .lanyard-presence .status .dot.dnd { background: var(--red); box-shadow: 0 0 8px var(--red); }
+  .lanyard-presence .status .dot.offline { background: var(--gray); box-shadow: none; animation: none; }
+
+  .lanyard-presence .activity {
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* СТАТИСТИКА */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .stat {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 14px 8px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .stat:hover {
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(88, 101, 242, 0.3);
+  }
+
+  .stat .num {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--primary);
+    font-family: 'Courier New', monospace;
+    margin-bottom: 4px;
+    text-shadow: 0 0 10px rgba(88, 101, 242, 0.5);
+  }
+
+  .stat .lbl {
+    font-size: 9px;
+    color: #666;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ССЫЛКИ */
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .link::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--primary), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .link:hover {
+    transform: translateX(8px) scale(1.02);
+    border-color: var(--primary);
+    box-shadow: 
+      0 0 30px rgba(88, 101, 242, 0.5),
+      inset 0 0 20px rgba(88, 101, 242, 0.1);
+  }
+
+  .link:hover::before { opacity: 0.2; }
+
+  .link.telegram:hover {
+    border-color: var(--accent);
+    box-shadow: 
+      0 0 30px rgba(0, 212, 255, 0.5),
+      inset 0 0 20px rgba(0, 212, 255, 0.1);
+  }
+
+  .link.telegram::before {
+    background: linear-gradient(135deg, var(--accent), transparent);
+  }
+
+  .link-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s;
+  }
+
+  .link:hover .link-icon { transform: scale(1.1) rotate(-5deg); }
+
+  .link.discord .link-icon {
+    background: linear-gradient(135deg, #5865F2, #4752c4);
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.5);
+  }
+
+  .link.telegram .link-icon {
+    background: linear-gradient(135deg, #0088cc, #006699);
+    box-shadow: 0 0 20px rgba(0, 136, 204, 0.5);
+  }
+
+  .link-text { flex: 1; position: relative; z-index: 1; }
+
+  .link-title {
+    font-weight: bold;
+    margin-bottom: 3px;
+    font-size: 14px;
+  }
+
+  .link-desc {
+    font-size: 11px;
+    color: #888;
+  }
+
+  .link-arrow {
+    color: #555;
+    font-size: 20px;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1;
+  }
+
+  .link:hover .link-arrow {
+    transform: translateX(8px);
+    color: var(--primary);
+  }
+
+  /* МУЗЫКА */
+  .music-player {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .music-player::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transition: width 0.3s;
+  }
+
+  .music-player.playing::before {
+    width: 100%;
+    animation: progress 30s linear infinite;
+  }
+
+  @keyframes progress {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+
+  .music-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.5);
+  }
+
+  .music-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(88, 101, 242, 0.8);
+  }
+
+  .music-info { flex: 1; min-width: 0; }
+
+  .music-title {
+    font-size: 13px;
+    color: #fff;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
+  }
+
+  .music-status {
+    font-size: 10px;
+    color: #666;
+    font-family: 'Courier New', monospace;
+  }
+
+  .waves {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 28px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .waves.active { opacity: 1; }
+
+  .waves span {
+    width: 3px;
+    background: linear-gradient(to top, var(--primary), var(--accent));
+    border-radius: 2px;
+    animation: wave 0.8s ease infinite;
+  }
+
+  .waves span:nth-child(1) { animation-delay: 0s; }
+  .waves span:nth-child(2) { animation-delay: 0.1s; }
+  .waves span:nth-child(3) { animation-delay: 0.2s; }
+  .waves span:nth-child(4) { animation-delay: 0.3s; }
+  .waves span:nth-child(5) { animation-delay: 0.4s; }
+  .waves span:nth-child(6) { animation-delay: 0.5s; }
+  .waves span:nth-child(7) { animation-delay: 0.6s; }
+
+  @keyframes wave {
+    0%, 100% { height: 4px; }
+    50% { height: 28px; }
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+  }
+
+  .footer a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .footer a:hover {
+    color: var(--accent);
+    text-shadow: 0 0 10px var(--accent);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 9999;
+    box-shadow: 0 0 30px rgba(88, 101, 242, 0.5);
+    pointer-events: none;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  @media (max-width: 480px) {
+    .card-wrapper { padding: 20px 12px; }
+    .card { padding: 25px 20px; border-radius: 20px; }
+    h1 { font-size: 22px; letter-spacing: 1px; }
+    .avatar-container { width: 110px; height: 110px; }
+    .username { font-size: 11px; }
+    .stats { gap: 6px; }
+    .stat .num { font-size: 16px; }
+    .stat { padding: 10px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<canvas id="particles"></canvas>
+<div class="bg-gradient"></div>
+<div class="bg-grid"></div>
+
+<div class="card-wrapper">
+  <div class="card" id="card">
+    
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <div class="avatar-container">
+      <div class="avatar-ring"></div>
+      <div class="avatar-ring-inner"></div>
+      <div class="avatar" id="avatar">
+        <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" id="avatarImg">
+      </div>
+      <div class="online-badge" id="onlineBadge"></div>
+    </div>
+
+    <h1 data-text="ДМИТРИЙ" id="displayName">ДМИТРИЙ</h1>
+    <div class="username" id="displayUsername">@chilovek_na_lade</div>
+
+    <div class="badges">
+      <div class="badge premium">⭐ Premium</div>
+      <div class="badge dev">💻 Dev</div>
+      <div class="badge elite">🏴‍☠️ Elite RP</div>
+    </div>
+
+    <div class="bio">
+      <span class="type" id="typedText"></span>
+    </div>
+
+    <!-- LANYARD LIVE -->
+    <div class="lanyard-presence" id="lanyardPresence">
+      <div class="icon" id="lanyardIcon">💬</div>
+      <div class="info">
+        <div class="status">
+          <span class="dot" id="statusDot"></span>
+          <span id="lanyardStatus">Загрузка...</span>
+        </div>
+        <div class="activity" id="lanyardActivity">Подключение к Lanyard...</div>
+      </div>
+    </div>
+
+    <!-- СТАТИСТИКА -->
+    <div class="stats">
+      <div class="stat">
+        <div class="num" id="statProjects">0</div>
+        <div class="lbl">Проектов</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="statMembers">0</div>
+        <div class="lbl">Участников</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="statOnline">0</div>
+        <div class="lbl">Онлайн</div>
+      </div>
+    </div>
+
+    <!-- ССЫЛКИ -->
+    <div class="links">
+      <a href="https://discord.gg/WXZz7r9JSu" target="_blank" class="link discord">
+        <div class="link-icon">💬</div>
+        <div class="link-text">
+          <div class="link-title">Discord сервер</div>
+          <div class="link-desc">Элитная Ролевая Игра</div>
+        </div>
+        <div class="link-arrow">→</div>
+      </a>
+
+      <a href="https://t.me/Elite_RP_K" target="_blank" class="link telegram">
+        <div class="link-icon">✈️</div>
+        <div class="link-text">
+          <div class="link-title">Telegram канал</div>
+          <div class="link-desc">@Elite_RP_K</div>
+        </div>
+        <div class="link-arrow">→</div>
+      </a>
+    </div>
+
+    <!-- МУЗЫКА -->
+    <div class="music-player" id="musicPlayer">
+      <button class="music-btn" id="musicBtn" onclick="toggleMusic()">▶</button>
+      <div class="music-info">
+        <div class="music-title" id="musicTitle">🥀 ELITE RP — Theme</div>
+        <div class="music-status" id="musicStatus">Нажми ▶ чтобы играть</div>
+      </div>
+      <div class="waves" id="waves">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="footer">
+      made by <a href="https://discord.gg/WXZz7r9JSu">ELITE RP</a> • 2026
+    </div>
+
+  </div>
+</div>
+
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div class="toast" id="toast">✅ Скопировано!</div>
+
+<script>
+// =============================================
+// НАСТРОЙКИ
+// =============================================
+const DISCORD_USER_ID = "1049747616663080970";
+const GUILD_ID = "1534960438192767147";
+const LANYARD_API = `https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`;
+const DISCORD_API = `https://discord.com/api/guilds/${GUILD_ID}/widget.json`;
+
+// Фиксированные значения
+const TOTAL_PROJECTS = 2;
+const TOTAL_MEMBERS = 51;
+
+// =============================================
+// КУРСОР
+// =============================================
+const cursor = document.getElementById('cursor');
+const cursorTrail = document.getElementById('cursorTrail');
+
+document.addEventListener('mousemove', (e) => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  setTimeout(() => {
+    cursorTrail.style.left = e.clientX + 'px';
+    cursorTrail.style.top = e.clientY + 'px';
+  }, 60);
+});
+
+document.querySelectorAll('a, button, .stat, .badge').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+});
+
+document.addEventListener('mousedown', () => cursor.style.transform = 'translate(-50%, -50%) scale(0.7)');
+document.addEventListener('mouseup', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
+
+// =============================================
+// ЧАСТИЦЫ
+// =============================================
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.4;
+    this.vy = (Math.random() - 0.5) * 0.4;
+    this.size = Math.random() * 2 + 0.5;
+    this.color = ['#5865F2', '#00d4ff', '#ff00ea'][Math.floor(Math.random() * 3)];
+    this.opacity = Math.random() * 0.5 + 0.1;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.globalAlpha = this.opacity;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+for (let i = 0; i < 70; i++) particles.push(new Particle());
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = '#5865F2';
+        ctx.globalAlpha = (1 - dist / 120) * 0.15;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// =============================================
+// ПЕЧАТАЮЩИЙСЯ ТЕКСТ
+// =============================================
+const bioTexts = [
+  "🎮 Roblox Developer",
+  "🏴‍☠️ Создаю копии и проекты",
+  "💬 Discord: chilovek_na_lade",
+  "📅 22.08"
+];
+let bioIndex = 0, charIndex = 0, isDeleting = false;
+const typedEl = document.getElementById('typedText');
+
+function typeEffect() {
+  const currentText = bioTexts[bioIndex];
+  if (isDeleting) {
+    typedEl.textContent = currentText.substring(0, charIndex - 1);
+    charIndex--;
+  } else {
+    typedEl.textContent = currentText.substring(0, charIndex + 1);
+    charIndex++;
+  }
+  if (!isDeleting && charIndex === currentText.length) {
+    setTimeout(() => { isDeleting = true; }, 2000);
+  } else if (isDeleting && charIndex === 0) {
+    isDeleting = false;
+    bioIndex = (bioIndex + 1) % bioTexts.length;
+  }
+  setTimeout(typeEffect, isDeleting ? 50 : 100);
+}
+typeEffect();
+
+// =============================================
+// LANYARD — СИНХРОН
+// =============================================
+function getStatusClass(status) {
+  if (status === 'online') return '';
+  if (status === 'idle') return 'idle';
+  if (status === 'dnd') return 'dnd';
+  return 'offline';
+}
+
+function getStatusText(status) {
+  if (status === 'online') return 'Онлайн';
+  if (status === 'idle') return 'Не активен';
+  if (status === 'dnd') return 'Не беспокоить';
+  return 'Оффлайн';
+}
+
+fetch(LANYARD_API)
+  .then(r => r.json())
+  .then(res => {
+    if (!res.success) throw new Error('Lanyard не подключён');
+    const data = res.data;
+    const user = data.discord_user;
+
+    console.log('✅ Lanyard данные:', data);
+
+    // Аватарка
+    let avatarUrl = 'https://cdn.discordapp.com/embed/avatars/0.png';
+    if (user.avatar) {
+      const ext = user.avatar.startsWith('a_') ? 'gif' : 'png';
+      avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}?size=256`;
+    }
+    document.getElementById('avatarImg').src = avatarUrl;
+
+    // Имя
+    const displayName = user.global_name || user.username;
+    document.getElementById('displayName').textContent = displayName;
+    document.getElementById('displayName').setAttribute('data-text', displayName);
+
+    // Username
+    document.getElementById('displayUsername').textContent = '@' + user.username;
+
+    // Статус
+    const statusClass = getStatusClass(data.discord_status);
+    document.getElementById('onlineBadge').className = 'online-badge ' + statusClass;
+    document.getElementById('statusDot').className = 'dot ' + statusClass;
+    document.getElementById('lanyardStatus').textContent = getStatusText(data.discord_status);
+
+    // Активность
+    const activities = data.activities || [];
+    const customStatus = activities.find(a => a.type === 4);
+    const game = activities.find(a => a.type === 0);
+
+    let activityText = 'Не в сети';
+    if (customStatus && customStatus.state) {
+      activityText = (customStatus.emoji ? customStatus.emoji.name + ' ' : '') + customStatus.state;
+    } else if (game) {
+      activityText = '🎮 ' + game.name;
+    } else if (data.listening_to_spotify && data.spotify) {
+      activityText = '🎵 ' + data.spotify.song + ' — ' + data.spotify.artist;
+    } else if (data.discord_status === 'online') {
+      activityText = 'Онлайн';
+    } else {
+      activityText = 'Оффлайн';
+    }
+    document.getElementById('lanyardActivity').textContent = activityText;
+
+    // Иконка
+    const icon = document.getElementById('lanyardIcon');
+    if (data.listening_to_spotify && data.spotify) {
+      icon.textContent = '🎵';
+    } else if (game) {
+      icon.textContent = '🎮';
+    } else {
+      icon.innerHTML = `<img src="${avatarUrl}" alt="">`;
+    }
+  })
+  .catch(err => {
+    console.error('❌ Lanyard:', err);
+    document.getElementById('lanyardStatus').textContent = 'Lanyard не подключён';
+    document.getElementById('lanyardActivity').textContent = 'Зайди на сервер Lanyard';
+    document.getElementById('statusDot').className = 'dot offline';
+  });
+
+// =============================================
+// СТАТИСТИКА СЕРВЕРА
+// =============================================
+fetch(DISCORD_API)
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('statOnline').textContent = data.presence_count;
+    animateNumber('statOnline', 0, data.presence_count, 1200);
+  })
+  .catch(err => {
+    console.error('❌ Widget:', err);
+    document.getElementById('statOnline').textContent = '—';
+  });
+
+// Проекты и Участники — фиксированные
+document.getElementById('statProjects').textContent = TOTAL_PROJECTS;
+document.getElementById('statMembers').textContent = TOTAL_MEMBERS;
+animateNumber('statProjects', 0, TOTAL_PROJECTS, 1000);
+animateNumber('statMembers', 0, TOTAL_MEMBERS, 1500);
+
+// =============================================
+// АНИМАЦИЯ ЧИСЕЛ
+// =============================================
+function animateNumber(id, start, end, duration) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const startTime = performance.now();
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(start + (end - start) * eased);
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// =============================================
+// МУЗЫКА
+// =============================================
+function toggleMusic() {
+  const music = document.getElementById('bgMusic');
+  const btn = document.getElementById('musicBtn');
+  const waves = document.getElementById('waves');
+  const status = document.getElementById('musicStatus');
+  const player = document.getElementById('musicPlayer');
+
+  if (music.paused) {
+    music.play().then(() => {
+      btn.textContent = '⏸';
+      waves.classList.add('active');
+      player.classList.add('playing');
+      status.textContent = '● Играет...';
+    }).catch(e => {
+      status.textContent = '❌ Файл music.mp3 не найден';
+    });
+  } else {
+    music.pause();
+    btn.textContent = '▶';
+    waves.classList.remove('active');
+    player.classList.remove('playing');
+    status.textContent = 'Пауза';
+  }
+}
+
+// Автоплей при 1-м клике
+let audioUnlocked = false;
+document.addEventListener('click', () => {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  const music = document.getElementById('bgMusic');
+  music.volume = 0.3;
+  music.play().then(() => {
+    document.getElementById('musicBtn').textContent = '⏸';
+    document.getElementById('waves').classList.add('active');
+    document.getElementById('musicPlayer').classList.add('playing');
+    document.getElementById('musicStatus').textContent = '● Играет...';
+  }).catch(() => {});
+}, { once: true });
+
+// Автообновление Lanyard каждые 15 секунд
+setInterval(() => {
+  fetch(LANYARD_API)
+    .then(r => r.json())
+    .then(res => {
+      if (!res.success) return;
+      const data = res.data;
+      const statusClass = getStatusClass(data.discord_status);
+      document.getElementById('onlineBadge').className = 'online-badge ' + statusClass;
+      document.getElementById('statusDot').className = 'dot ' + statusClass;
+      document.getElementById('lanyardStatus').textContent = getStatusText(data.discord_status);
+    })
+    .catch(() => {});
+}, 15000);
+
+console.log('🔥 ELITE RP — ULTRA EDITION загружен');
+</script>
+
+</body>
+</html>
